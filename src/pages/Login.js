@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import tw from 'tailwind-styled-components';
 import background from '../assets/background.svg';
 import Otp from '../components/Otp';
+import Loader from '../components/Loader';
 
 const Container = tw.div`w-full h-full bg-cover bg-center flex items-center justify-center
 `;
@@ -20,14 +21,27 @@ const SendButton = tw.button`h-12 text-2xl px-3 font-medium text-white bg-[#d789
 
 const Login = () => {
 	const [enteringOTP, setEnteringOTP] = useState(false);
+	const [loading, setLoading] = useState(false);
+	let interval = null;
 
 	const handleSubmit = (e) => {
+		setLoading(true);
 		e.preventDefault();
-		setEnteringOTP(true);
+		interval = setInterval(() => {
+			setEnteringOTP(true);
+			setLoading(false);
+		}, 1000);
 	};
+
+	useEffect(() => {
+		return () => {
+			clearInterval(interval);
+		};
+	}, [interval]);
 
 	return (
 		<Container>
+			{loading && <Loader text='Sending OTP...' />}
 			<Background src={background} />
 			{!enteringOTP ? (
 				<Wrapper onClick={handleSubmit}>
